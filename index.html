@@ -12,10 +12,11 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monster Survivors - Epic Survival Adventure Game | Play Online</title>
-    <meta name="description" content="Play Monster Survivors, an exciting survival adventure game where you battle against waves of monsters. Experience intense gameplay, upgrade your character, and survive in this thrilling online game.">
-    <link rel="canonical" href="https://monstersurvivors.com">
+    <title>Game Hub - Your Ultimate Gaming Destination</title>
+    <meta name="description" content="Discover and play the best online games in one place. From action-packed adventures to brain-teasing puzzles, find your perfect game today.">
+    <link rel="canonical" href="https://gamehub.com">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/games-config.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
@@ -43,6 +44,7 @@
         .nav-link {
             position: relative;
             color: #4B5563;
+            cursor: pointer;
         }
         .nav-link::after {
             content: '';
@@ -57,15 +59,34 @@
         .nav-link:hover::after {
             width: 100%;
         }
+        .nav-link.active {
+            color: #FF6B6B;
+        }
+        .nav-link.active::after {
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            .game-nav {
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            .game-nav::-webkit-scrollbar {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen">
     <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-bold gradient-text">Monster Survivors</h1>
-                <div class="space-x-6">
-                    <a href="#game" class="nav-link">Play Now</a>
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <h1 class="text-2xl font-bold gradient-text">Game Hub</h1>
+                <div class="game-nav flex space-x-6 overflow-x-auto pb-2">
+                    <!-- Game navigation will be populated by JavaScript -->
+                </div>
+                <div class="hidden md:flex space-x-6">
                     <a href="#about" class="nav-link">About</a>
                     <a href="#features" class="nav-link">Features</a>
                 </div>
@@ -75,13 +96,14 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <section class="text-center mb-12">
-            <h2 class="text-4xl font-bold gradient-text mb-4">Survive the Monster Apocalypse</h2>
-            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Embark on an epic journey of survival in Monster Survivors, where every second counts and every decision matters.</p>
+            <h2 id="game-title" class="text-4xl font-bold gradient-text mb-4">Monster Survivors</h2>
+            <p id="game-description" class="text-xl text-gray-600 max-w-2xl mx-auto">Embark on an epic journey of survival in Monster Survivors, where every second counts and every decision matters.</p>
         </section>
 
         <section id="game" class="mb-16">
             <div class="game-container bg-white rounded-lg overflow-hidden">
                 <iframe 
+                    id="game-frame"
                     src="https://cloud.onlinegames.io/games/2025/unity/monster-survivors/index-og.html" 
                     class="w-full h-full border-0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -112,19 +134,8 @@
 
         <section id="features" class="mb-16">
             <h2 class="text-3xl font-bold gradient-text mb-6">Game Features</h2>
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-sm card-hover">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Progressive Difficulty</h3>
-                    <p class="text-gray-600">Each wave brings increasingly challenging monsters, testing your survival skills to the limit.</p>
-                </div>
-                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-sm card-hover">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Character Development</h3>
-                    <p class="text-gray-600">Upgrade your abilities, unlock new weapons, and become stronger as you progress.</p>
-                </div>
-                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-sm card-hover">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Strategic Gameplay</h3>
-                    <p class="text-gray-600">Make crucial decisions about upgrades and resource management to maximize your survival chances.</p>
-                </div>
+            <div id="features-grid" class="grid md:grid-cols-3 gap-6">
+                <!-- Features will be populated by JavaScript -->
             </div>
         </section>
     </main>
@@ -132,9 +143,54 @@
     <footer class="bg-white/80 backdrop-blur-md border-t">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="text-center text-gray-600">
-                <p>&copy; 2024 Monster Survivors. All rights reserved.</p>
+                <p>&copy; 2024 Game Hub. All rights reserved.</p>
             </div>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate game navigation
+            const gameNav = document.querySelector('.game-nav');
+            Object.entries(gamesConfig).forEach(([key, game]) => {
+                const link = document.createElement('a');
+                link.classList.add('nav-link');
+                link.dataset.game = key;
+                link.textContent = game.title;
+                link.addEventListener('click', () => switchGame(key));
+                gameNav.appendChild(link);
+            });
+
+            // Set initial active game
+            switchGame('monster-survivors');
+        });
+
+        function switchGame(gameKey) {
+            const game = gamesConfig[gameKey];
+            if (!game) return;
+
+            // Update active navigation link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.game === gameKey) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Update game content
+            document.getElementById('game-title').textContent = game.title;
+            document.getElementById('game-description').textContent = game.description;
+            document.getElementById('game-frame').src = game.url;
+
+            // Update features
+            const featuresGrid = document.getElementById('features-grid');
+            featuresGrid.innerHTML = game.features.map(feature => `
+                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-sm card-hover">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">${feature}</h3>
+                    <p class="text-gray-600">Experience ${feature.toLowerCase()} in this exciting game.</p>
+                </div>
+            `).join('');
+        }
+    </script>
 </body>
 </html> 
