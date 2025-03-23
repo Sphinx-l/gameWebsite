@@ -17,6 +17,7 @@
     <link rel="canonical" href="https://gamehub.com">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/games-config.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
@@ -65,6 +66,109 @@
         .nav-link.active::after {
             width: 100%;
         }
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        .carousel-item {
+            flex: 0 0 100%;
+            position: relative;
+        }
+        .carousel-item img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+        .carousel-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+        }
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 1rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .carousel-control:hover {
+            background: rgba(0,0,0,0.8);
+        }
+        .carousel-prev {
+            left: 1rem;
+        }
+        .carousel-next {
+            right: 1rem;
+        }
+        .tag {
+            background: rgba(255, 255, 255, 0.85);
+            color: #FF6B6B;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-right: 0.35rem;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        .tag::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #FF6B6B;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        .dark-mode {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+        }
+        .dark-mode .bg-white {
+            background-color: #2d2d2d !important;
+        }
+        .dark-mode .text-gray-600 {
+            color: #a0aec0 !important;
+        }
+        .dark-mode .text-gray-900 {
+            color: #ffffff !important;
+        }
+        .dark-mode .tag {
+            background: rgba(60, 60, 70, 0.9);
+            color: #FF8C8C;
+            border-color: rgba(255, 140, 140, 0.3);
+        }
+        .category-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+        .category-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
         @media (max-width: 768px) {
             .game-nav {
                 overflow-x: auto;
@@ -83,23 +187,50 @@
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                 <h1 class="text-2xl font-bold gradient-text">Game Hub</h1>
-                <div class="game-nav flex space-x-6 overflow-x-auto pb-2">
-                    <!-- Game navigation will be populated by JavaScript -->
-                </div>
-                <div class="hidden md:flex space-x-6">
-                    <a href="#about" class="nav-link">About</a>
-                    <a href="#features" class="nav-link">Features</a>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Search games..." 
+                               class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]">
+                        <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <div id="search-results" class="absolute left-0 right-0 mt-2 bg-white rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto hidden"></div>
+                    </div>
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                    <a href="profile.html" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-user"></i>
+                    </a>
                 </div>
             </div>
         </nav>
     </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <section class="text-center mb-12">
-            <h2 id="game-title" class="text-4xl font-bold gradient-text mb-4">Monster Survivors</h2>
-            <p id="game-description" class="text-xl text-gray-600 max-w-2xl mx-auto">Embark on an epic journey of survival in Monster Survivors, where every second counts and every decision matters.</p>
+        <!-- Categories Section -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold gradient-text mb-6">Game Categories</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <!-- Categories will be populated by JavaScript -->
+            </div>
         </section>
 
+        <!-- Carousel Section -->
+        <section class="mb-12">
+            <div class="carousel">
+                <div class="carousel-inner" id="carousel-inner">
+                    <!-- Carousel items will be populated by JavaScript -->
+                </div>
+                <button class="carousel-control carousel-prev" onclick="moveCarousel(-1)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-control carousel-next" onclick="moveCarousel(1)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Game Section -->
         <section id="game" class="mb-16">
             <div class="game-container bg-white rounded-lg overflow-hidden">
                 <iframe 
@@ -112,30 +243,24 @@
             </div>
         </section>
 
+        <!-- About Section -->
         <section id="about" class="mb-16">
-            <h2 class="text-3xl font-bold gradient-text mb-6">About Monster Survivors</h2>
+            <h2 class="text-3xl font-bold gradient-text mb-6">About Game Hub</h2>
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-sm card-hover">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Game Overview</h3>
-                    <p class="text-gray-600">Monster Survivors is an intense survival game that puts your skills to the ultimate test. As waves of monsters descend upon you, you must strategically upgrade your abilities, collect resources, and fight for survival.</p>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Our Mission</h3>
+                    <p class="text-gray-600">Game Hub is your ultimate destination for online gaming entertainment. We curate the best games across various genres to provide you with endless hours of fun and excitement.</p>
                 </div>
                 <div class="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-sm card-hover">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Key Features</h3>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Why Choose Us</h3>
                     <ul class="list-disc list-inside text-gray-600 space-y-2">
-                        <li>Dynamic wave-based gameplay</li>
-                        <li>Character progression system</li>
-                        <li>Multiple weapon types</li>
-                        <li>Strategic upgrade paths</li>
-                        <li>Engaging monster variety</li>
+                        <li>Curated collection of high-quality games</li>
+                        <li>Regular updates and new releases</li>
+                        <li>Cross-platform compatibility</li>
+                        <li>User-friendly interface</li>
+                        <li>Personalized gaming experience</li>
                     </ul>
                 </div>
-            </div>
-        </section>
-
-        <section id="features" class="mb-16">
-            <h2 class="text-3xl font-bold gradient-text mb-6">Game Features</h2>
-            <div id="features-grid" class="grid md:grid-cols-3 gap-6">
-                <!-- Features will be populated by JavaScript -->
             </div>
         </section>
     </main>
@@ -149,47 +274,143 @@
     </footer>
 
     <script>
+        let currentCarouselIndex = 0;
+        let popularGames = [];
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Populate game navigation
-            const gameNav = document.querySelector('.game-nav');
-            Object.entries(gamesConfig).forEach(([key, game]) => {
-                const link = document.createElement('a');
-                link.classList.add('nav-link');
-                link.dataset.game = key;
-                link.textContent = game.title;
-                link.addEventListener('click', () => switchGame(key));
-                gameNav.appendChild(link);
+            // Load categories
+            const categoriesGrid = document.querySelector('.grid');
+            Object.entries(gamesNewConfig.categories).forEach(([key, category]) => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerHTML = `
+                    <div class="category-icon">${category.icon}</div>
+                    <h3 class="text-lg font-semibold text-gray-900">${category.name}</h3>
+                    <p class="text-sm text-gray-600 mt-2">${category.description}</p>
+                `;
+                card.addEventListener('click', () => {
+                    window.location.href = `category.html?category=${key}`;
+                });
+                categoriesGrid.appendChild(card);
             });
 
-            // Set initial active game
-            switchGame('monster-survivors');
-        });
+            // Load popular games for carousel
+            popularGames = gamesNewConfig.getPopularGames(5);
+            const carouselInner = document.getElementById('carousel-inner');
+            carouselInner.innerHTML = popularGames.map(game => `
+                <div class="carousel-item">
+                    ${game.thumbnail && !game.thumbnail.includes('example.com') ? 
+                      `<img src="${game.thumbnail}" alt="${game.title}">` : 
+                      `<div class="w-full h-400 bg-gradient-to-r from-[#e66465] to-[#9198e5] flex items-center justify-center">
+                         <i class="fas fa-gamepad text-white text-8xl"></i>
+                       </div>`
+                    }
+                    <div class="carousel-content">
+                        <h3 class="text-2xl font-bold mb-2">${game.title}</h3>
+                        <p class="mb-4">${game.description}</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${game.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                        <button onclick="playGame('${game.url}')" 
+                                class="mt-4 bg-white text-gray-900 px-6 py-2 rounded-lg hover:bg-gray-100">
+                            Play Now
+                        </button>
+                    </div>
+                </div>
+            `).join('');
 
-        function switchGame(gameKey) {
-            const game = gamesConfig[gameKey];
-            if (!game) return;
+            // Theme toggle
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            });
 
-            // Update active navigation link
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.dataset.game === gameKey) {
-                    link.classList.add('active');
+            // Check saved theme
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+
+            // Search functionality
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const results = gamesNewConfig.searchGames(query);
+                // Implement search results display
+                
+                // 添加搜索结果显示
+                if (query.length > 0) {
+                    showSearchResults(results);
+                } else {
+                    hideSearchResults();
                 }
             });
 
-            // Update game content
-            document.getElementById('game-title').textContent = game.title;
-            document.getElementById('game-description').textContent = game.description;
-            document.getElementById('game-frame').src = game.url;
+            // Check URL for game parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const gameUrl = urlParams.get('game');
+            if (gameUrl) {
+                document.getElementById('game-frame').src = decodeURIComponent(gameUrl);
+            }
+        });
 
-            // Update features
-            const featuresGrid = document.getElementById('features-grid');
-            featuresGrid.innerHTML = game.features.map(feature => `
-                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-sm card-hover">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">${feature}</h3>
-                    <p class="text-gray-600">Experience ${feature.toLowerCase()} in this exciting game.</p>
-                </div>
-            `).join('');
+        function moveCarousel(direction) {
+            const carouselInner = document.getElementById('carousel-inner');
+            currentCarouselIndex = (currentCarouselIndex + direction + popularGames.length) % popularGames.length;
+            carouselInner.style.transform = `translateX(-${currentCarouselIndex * 100}%)`;
+        }
+
+        function playGame(url) {
+            window.location.href = `index.html?game=${encodeURIComponent(url)}`;
+        }
+
+        // Auto-advance carousel
+        setInterval(() => moveCarousel(1), 5000);
+
+        function showSearchResults(results) {
+            const searchResults = document.getElementById('search-results');
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div class="p-4 text-center text-gray-500">没有找到相关游戏</div>';
+            } else {
+                searchResults.innerHTML = results.map(game => `
+                    <div class="p-4 border-b hover:bg-gray-50 cursor-pointer" onclick="playGame('${game.url}')">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 mr-3">
+                                <div class="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center overflow-hidden">
+                                    ${game.thumbnail ? `<img src="${game.thumbnail}" alt="${game.title}" class="w-full h-full object-cover">` : 
+                                    `<i class="fas fa-gamepad text-gray-400 text-xl"></i>`}
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-medium text-gray-900">${game.title}</h4>
+                                <p class="text-xs text-gray-500 truncate">${game.description}</p>
+                                <div class="flex mt-1">
+                                    ${game.tags.slice(0, 2).map(tag => `<span class="tag text-xs">${tag}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            searchResults.classList.remove('hidden');
+            
+            // 添加点击外部区域关闭搜索结果
+            document.addEventListener('click', closeSearchResults);
+        }
+        
+        function hideSearchResults() {
+            const searchResults = document.getElementById('search-results');
+            searchResults.classList.add('hidden');
+            document.removeEventListener('click', closeSearchResults);
+        }
+        
+        function closeSearchResults(e) {
+            if (!document.getElementById('search-input').contains(e.target) && 
+                !document.getElementById('search-results').contains(e.target)) {
+                hideSearchResults();
+            }
         }
     </script>
 </body>

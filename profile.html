@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Game Hub</title>
+    <meta name="description" content="View your gaming history and favorites">
+    <link rel="canonical" href="https://gamehub.com/profile">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/games-config.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f5f7 0%, #e8e8eb 100%);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+                .tag {
+            background: rgba(255, 255, 255, 0.85);
+            color: #FF6B6B;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-right: 0.35rem;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        .tag::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #FF6B6B;
+            border-radius: 50%;
+            margin-right: 4px;
+        } .tag::before { content: ''; display: inline-block; width: 6px; height: 6px; background-color: #FF6B6B; border-radius: 50%; margin-right: 4px; }
+        .dark-mode {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+        }
+        .dark-mode .bg-white {
+            background-color: #2d2d2d !important;
+        }
+        .dark-mode .text-gray-600 {
+            color: #a0aec0 !important;
+        }
+        .dark-mode .text-gray-900 {
+            color: #ffffff !important;
+        }
+        .dark-mode .tag {
+            background: rgba(60, 60, 70, 0.9);
+            color: #FF8C8C;
+            border-color: rgba(255, 140, 140, 0.3);
+        }
+        .tab-active {
+            border-bottom: 2px solid #FF6B6B;
+            color: #FF6B6B;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-2xl font-bold gradient-text">Game Hub</a>
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                    <a href="profile.html" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-user"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <div class="flex items-center space-x-4">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-r from-[#FF6B6B] to-[#4ECDC4] flex items-center justify-center">
+                    <i class="fas fa-user text-3xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Player Name</h1>
+                    <p class="text-gray-600">Member since 2024</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex space-x-4 mb-6">
+            <button onclick="switchTab('history')" class="tab-button px-4 py-2 text-gray-600 hover:text-[#FF6B6B] tab-active">
+                <i class="fas fa-history mr-2"></i>Game History
+            </button>
+            <button onclick="switchTab('favorites')" class="tab-button px-4 py-2 text-gray-600 hover:text-[#FF6B6B]">
+                <i class="fas fa-heart mr-2"></i>Favorites
+            </button>
+            <button onclick="switchTab('stats')" class="tab-button px-4 py-2 text-gray-600 hover:text-[#FF6B6B]">
+                <i class="fas fa-chart-bar mr-2"></i>Statistics
+            </button>
+        </div>
+
+        <div id="history-tab" class="tab-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="history-grid">
+                <!-- Game history will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div id="favorites-tab" class="tab-content hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="favorites-grid">
+                <!-- Favorites will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div id="stats-tab" class="tab-content hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Total Play Time</h3>
+                    <div class="text-3xl font-bold gradient-text">127 hours</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Games Played</h3>
+                    <div class="text-3xl font-bold gradient-text">24</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Favorite Category</h3>
+                    <div class="text-3xl font-bold gradient-text">Action</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white/80 backdrop-blur-md border-t mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center text-gray-600">
+                <p>&copy; 2024 Game Hub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mock data for demonstration
+        const mockHistory = [
+            {
+                game: 'monster-survivors',
+                playTime: '2 hours',
+                lastPlayed: '2024-02-15'
+            },
+            {
+                game: 'candy-crush',
+                playTime: '1 hour',
+                lastPlayed: '2024-02-14'
+            }
+        ];
+
+        const mockFavorites = ['monster-survivors', 'racing-champions', 'dragon-quest'];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial tab content
+            loadHistory();
+
+            // Theme toggle
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            });
+
+            // Check saved theme
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('tab-active');
+            });
+            event.target.classList.add('tab-active');
+
+            // Show selected tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`${tab}-tab`).classList.remove('hidden');
+
+            // Load tab content
+            switch(tab) {
+                case 'history':
+                    loadHistory();
+                    break;
+                case 'favorites':
+                    loadFavorites();
+                    break;
+                case 'stats':
+                    loadStats();
+                    break;
+            }
+        }
+
+        function loadHistory() {
+            const historyGrid = document.getElementById('history-grid');
+            historyGrid.innerHTML = mockHistory.map(entry => {
+                const game = gamesNewConfig.games[entry.game];
+                return `
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden card-hover">
+                        <div class="relative">
+                            ${game.thumbnail && !game.thumbnail.includes('example.com') ? 
+                              `<img src="${game.thumbnail}" alt="${game.title}" class="w-full h-48 object-cover">` : 
+                              `<div class="w-full h-48 bg-gradient-to-r from-[#e66465] to-[#9198e5] flex items-center justify-center">
+                                 <i class="fas fa-gamepad text-white text-4xl"></i>
+                               </div>`
+                            }
+                            <div class="absolute top-2 right-2 flex space-x-1">
+                                ${game.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">${game.title}</h3>
+                            <div class="flex justify-between items-center text-gray-600">
+                                <span>Played: ${entry.playTime}</span>
+                                <span>Last: ${new Date(entry.lastPlayed).toLocaleDateString()}</span>
+                            </div>
+                            <button onclick="playGame('${game.url}')" class="mt-4 w-full bg-gradient-to-r from-[#FF6B6B] to-[#4ECDC4] text-white px-4 py-2 rounded-lg hover:opacity-90">
+                                Play Again
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadFavorites() {
+            const favoritesGrid = document.getElementById('favorites-grid');
+            favoritesGrid.innerHTML = mockFavorites.map(gameKey => {
+                const game = gamesNewConfig.games[gameKey];
+                return `
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden card-hover">
+                        <div class="relative">
+                            ${game.thumbnail && !game.thumbnail.includes('example.com') ? 
+                              `<img src="${game.thumbnail}" alt="${game.title}" class="w-full h-48 object-cover">` : 
+                              `<div class="w-full h-48 bg-gradient-to-r from-[#e66465] to-[#9198e5] flex items-center justify-center">
+                                 <i class="fas fa-gamepad text-white text-4xl"></i>
+                               </div>`
+                            }
+                            <div class="absolute top-2 right-2 flex space-x-1">
+                                ${game.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">${game.title}</h3>
+                            <p class="text-gray-600 mb-4">${game.description}</p>
+                            <button onclick="playGame('${game.url}')" class="w-full bg-gradient-to-r from-[#FF6B6B] to-[#4ECDC4] text-white px-4 py-2 rounded-lg hover:opacity-90">
+                                Play Now
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadStats() {
+            // Stats are already in the HTML
+        }
+
+        function playGame(url) {
+            window.location.href = `index.html?game=${encodeURIComponent(url)}`;
+        }
+    </script>
+</body>
+</html> 
